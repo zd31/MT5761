@@ -5,3 +5,81 @@ date: "2023-10-23"
 output: html_document
 ---
 
+Four assumptions for linear model:
+<Independence, Constant variance, Normality, Linearity>
+
+Goal: 
+learn about Generalized Least Squares models and Generalized Linear Models.
+```{r include=FALSE}
+# Load necessary packages
+library(tidyverse)
+```
+
+```{r}
+# Read in data
+df <- read.csv("NystedFarms.csv")
+
+head(df)
+```
+```{r}
+# Figure 2
+ggplot() + 
+  geom_point(aes(x=XPos, y=YPos), 
+             colour='lightgrey', data=df) +
+  geom_point(aes(x=XPos, y=YPos, size=log(Count)), 
+             colour="#377eb8", data=subset(df, Count>0)) +
+  theme_bw() +
+  theme(panel.grid.major=element_blank(), 
+        panel.grid.minor=element_blank())+
+  coord_equal()
+```
+Independence > 
+The independence of different counts can be a problem as the animals are moving.
+
+Normality > 
+The residual variance cannot be negative(but we can use Poisson distribution for this) +
+and the variances have positive relation with counts(use log?).
+
+
+```{r}
+# Figure 3
+# Compute CIs for each construction phase using normal approx.
+alpha <- 0.05
+z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
+stats <- df %>%
+  group_by(Phase) %>%
+  summarise(Mean=mean(Count),
+            Var=var(Count),
+            N=n(),
+            CI=z_alpha_2*sqrt(Var/N))
+
+# Plot mean and 95% CIs
+ggplot(stats, aes(x=Phase, y=Mean, colour=Phase)) +
+  geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), size=1) +
+  geom_point(size=4) +
+  geom_text(aes(x=Phase, y=Mean+1.2*CI, label=paste0('N=', N))) +
+  ylab("Counts")
+```
+
+```{r}
+# Compute CIs for density using normal approx.
+alpha <- 0.05
+z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
+stats <- df %>%
+  group_by(YearMonth, Phase) %>%
+  summarise(Mean=mean(Count/Area),
+            Var=var(Count/Area),
+            N=n(),
+            CI=z_alpha_2*sqrt(Var/N))
+```
+```{r}
+# Plot mean and 95% CIs
+ggplot(stats, aes(x=YearMonth, y=Mean, colour=Phase)) +
+  geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), size=1) +
+  geom_point(size=2) +
+  theme(axis.text.x=element_text(angle=90)) +
+  ylab("Abundance per unit area") +
+  xlab("Year/Month")
+```
+Less data in months might account for the difference between phase 3 and phase 1&2.
+
