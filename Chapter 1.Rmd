@@ -1,7 +1,6 @@
 ---
-title: "Lecture 1"
+title: "Chapter 1"
 author: "Ziteng"
-date: "2023-10-23"
 output: html_document
 ---
 
@@ -22,7 +21,7 @@ df <- read.csv("NystedFarms.csv")
 head(df)
 ```
 ```{r}
-# Figure 2
+# Figure 2 Transect locations (grey lines) and locations with non-zero counts (blue dots). The size of the blue dots are scaled based on the associated count at each location and are shown along the transects.
 ggplot() + 
   geom_point(aes(x=XPos, y=YPos), 
              colour='lightgrey', data=df) +
@@ -34,7 +33,7 @@ ggplot() +
   coord_equal()
 ```
 Independence > 
-The independence of different counts can be a problem as the animals are moving.
+The independence of different counts can be a problem as the animals are moving. And we suspect the densities are correlated along transects.
 
 Normality > 
 The residual variance cannot be negative(but we can use Poisson distribution for this) +
@@ -42,7 +41,7 @@ and the variances have positive relation with counts(use log?).
 
 
 ```{r}
-# Figure 3
+# Figure 3 Mean counts per unit area (with  95% CIs) across phases
 # Compute CIs for each construction phase using normal approx.
 alpha <- 0.05
 z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
@@ -62,6 +61,7 @@ ggplot(stats, aes(x=Phase, y=Mean, colour=Phase)) +
 ```
 
 ```{r}
+# Figure 4 Average counts per unit area (with 95% CIs) across years and months (with phases indicated).
 # Compute CIs for density using normal approx.
 alpha <- 0.05
 z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
@@ -81,5 +81,45 @@ ggplot(stats, aes(x=YearMonth, y=Mean, colour=Phase)) +
   ylab("Abundance per unit area") +
   xlab("Year/Month")
 ```
-Less data in months might account for the difference between phase 3 and phase 1&2.
+From figure 3, we see there may be fewer animals in phase 3. However, shorter month coverage might account for the significant difference between phase 3 and phase 1&2, because the density might be changing with month or season. We are not suer what caused the difference. And time alone might not be able to explain the variation.
+
+
+```{r}
+# Figure 1.5: Scatterplots for potential model covariates and estimated densities.
+# Libraries
+library(gridExtra) # to arrange ggplots in a grid
+
+# Create list of plots of density against other covariates
+p <- list()
+for (covariate in c("XPos", "YPos", "Depth", "DistCoast"))
+{
+  p[[covariate]] <- ggplot(df, aes_string(x=covariate, 
+                                          y="Count/Area")) + 
+    geom_point(alpha=1/2) +
+    ylab("Abundance per unit area")    
+}
+
+# Arrange ggplots in a grid
+grid.arrange(grobs=p)
+```
+
+There are outliers.
+
+```{r}
+# Figure 1.6: Distance from coast across the surveyed area. The colours shown in each grid cell represent the average distance from coast in that cell.
+library(fields)
+quilt.plot(df$XPos, df$YPos, df$DistCoast, nx=35, ny=35,
+           xlab="XPos", ylab="YPos", asp=1)
+```
+
+
+
+
+
+
+
+
+
+
+
 
