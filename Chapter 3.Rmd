@@ -1,0 +1,32 @@
+---
+title: "Chapter 3"
+author: "Ziteng"
+date: "2023-10-27"
+output: html_document
+---
+
+```{r include=FALSE}
+# Load necessary packages
+library(nlme)
+
+# Read in data
+df <- read.csv("NystedFarms.csv")
+```
+
+
+3.1
+varfuncclass
+we need to fit y_it first, then
+
+
+parameter 'method' in gls()
+"ML" < maximum likelihood for information criteria
+but it give us biased estimator, why biased?
+
+Anova is not suitable for GLS
+
+
+
+
+
+
