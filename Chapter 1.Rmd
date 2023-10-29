@@ -6,9 +6,13 @@ output: html_document
 
 Four assumptions for linear model:
 <Independence, Constant variance, Normality, Linearity>
+With these assumption, our hands are tied sometimes.
 
-Goal: 
-learn about Generalized Least Squares models and Generalized Linear Models.
+GLMs is a method for data violates <Normality>
+
+Goal of this course:
+Learn about Generalized Least Squares models and Generalized Linear Models.
+
 ```{r include=FALSE}
 # Load necessary packages
 library(tidyverse)
@@ -32,16 +36,32 @@ ggplot() +
         panel.grid.minor=element_blank())+
   coord_equal()
 ```
+Check assumptions of linear models on the EIA data
+
 Independence > 
 The independence of different counts can be a problem as the animals are moving. And we suspect the densities are correlated along transects.
 
 Normality > 
-The residual variance cannot be negative(but we can use Poisson distribution for this) +
-and the variances have positive relation with counts(use log?).
+The residual variance must approach zero when count approaches zero (but we can use Poisson distribution for this).
+
+Constant variance >
+The variances may have positive relation with counts.
+
+Linearity >
 
 
+# 1.1 Research Questions
+In line with the programme objectives, we are going to ask some questions of the data:
+
+Does density appear to have changed across phases?
+What are the best predictors of density and what do these relationships look like?
+Do the animals appear to have redistributed across phases? If so, what does that redistribution look like?
+
+
+
+# 1.2 Exploratory Data Analysis
 ```{r}
-# Figure 3 Mean counts per unit area (with  95% CIs) across phases
+# Figure 1.3 Mean counts per unit area (with  95% CIs) across phases
 # Compute CIs for each construction phase using normal approx.
 alpha <- 0.05
 z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
@@ -61,7 +81,7 @@ ggplot(stats, aes(x=Phase, y=Mean, colour=Phase)) +
 ```
 
 ```{r}
-# Figure 4 Average counts per unit area (with 95% CIs) across years and months (with phases indicated).
+# Figure 1.4 Average counts per unit area (with 95% CIs) across years and months (with phases indicated).
 # Compute CIs for density using normal approx.
 alpha <- 0.05
 z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
@@ -81,7 +101,7 @@ ggplot(stats, aes(x=YearMonth, y=Mean, colour=Phase)) +
   ylab("Abundance per unit area") +
   xlab("Year/Month")
 ```
-From figure 3, we see there may be fewer animals in phase 3. However, shorter month coverage might account for the significant difference between phase 3 and phase 1&2, because the density might be changing with month or season. We are not suer what caused the difference. And time alone might not be able to explain the variation.
+From figure 1.3, we see there may be fewer animals in phase 3. However, shorter month coverage might account for the significant difference between phase 3 and phase 1&2, because the density might be changing with month or season. We are not sure what caused the difference. And time alone might not be able to explain the variation.
 
 
 ```{r}
@@ -105,11 +125,21 @@ grid.arrange(grobs=p)
 
 There are outliers.
 
+
+
 ```{r}
-# Figure 1.6: Distance from coast across the surveyed area. The colours shown in each grid cell represent the average distance from coast in that cell.
 library(fields)
-quilt.plot(df$XPos, df$YPos, df$DistCoast, nx=35, ny=35,
-           xlab="XPos", ylab="YPos", asp=1)
+par(mfrow=c(2,2))
+quilt.plot(df$XPos[df$Phase=="A"], df$YPos[df$Phase=="A"], df$Count[df$Phase=='A']/df$Area[df$Phase=='A'], pch=20, 
+           main="Phase A", xlab="X co-ordinate", ylab="Y co-ordinate", 
+           nrow=20, ncol=20, asp=1)
+quilt.plot(df$XPos[df$Phase=="B"], df$YPos[df$Phase=="B"], df$Count[df$Phase=='B']/df$Area[df$Phase=='B'], pch=20, 
+           main="Phase B", xlab="X co-ordinate", ylab="Y co-ordinate", 
+           nrow=20, ncol=20, asp=1)
+quilt.plot(df$XPos[df$Phase=="C"], df$YPos[df$Phase=="C"], df$Count[df$Phase=='C']/df$Area[df$Phase=='C'], pch=20, 
+           main="Phase C", xlab="X co-ordinate", ylab="Y co-ordinate", 
+           nrow=20, ncol=20, asp=1)
+par(mfrow=c(1,1))
 ```
 
 
