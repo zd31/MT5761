@@ -81,7 +81,7 @@ Normality --less important
 The residual
 Method: Q-Q plot
 
-Constant variance
+Constant variance --critical
 Method: B-P test with null hypo that variance is constant.
 
 Independence
