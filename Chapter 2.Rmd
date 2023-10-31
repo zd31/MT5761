@@ -37,10 +37,11 @@ Above we call main effects.
 ### Now we consider interactions, which give us additional information about the slope of specific continuous variable??? what is the combination of interactions?
 
 
-2.2 Model fitting
+# 2.2 Model fitting
 What do we mean by fitting a model?
 We want the "distance" between sample data and fitted model to be the smallest. >> Least Squared
-How we evaluate a statistic/estimate? <Consistent, Unbiased, Efficient> >Best Least Unbiased Estimate >B.L.U.E
+How we evaluate a statistic/estimate? <Consistent, Unbiased, Efficient> 
+<B.L.U.E> Best Least Unbiased Estimate
 
 Consistent means the more data you get, the smaller the variance from the true value.
 Unbiased means the expected value is the true value.
@@ -51,10 +52,12 @@ R default the model has an intercept.
 
 The df of covariates is the same with df of residual.
 
-In the coefficient part of the outcome of regression, each row are test separatedly. Cannot remove insignificant variable according to this
+In the coefficient part of the outcome of regression, each row is test separately. Cannot remove insignificant variable according to this.
 
 
 The residual standard error in regression output is the variance of residual.
+
+Lower R-square does not mean the model is not a good one.
 
 The F test in multiple regression, the null hypothesis is all coefficients are the same and equal to 0. Testing if the model is better than just a straight line.
 
@@ -62,15 +65,17 @@ avo & anova can do type I.
 Anova in package(car) can do type II and III.
 
 
+# 2.4 
 
 
-2.5 Model selection
+# 2.5 Model selection
 
-2.6 Check model assumption
+
+# 2.6 Check model assumption
 
 Linearity
 Explanatory variables have linear relation with response variable.
-Method: partial residual plots
+Method: partial residual plots >>> Covariates against residual
 
 Normality --less important
 The residual
@@ -80,10 +85,9 @@ Constant variance
 Method: B-P test with null hypo that variance is constant.
 
 Independence
-Method: DurbinWaston
+Method: Durbin-Watson
 
 Outliers and influential points
-what is the relation between the two types of observation?
 Method: cook's distance
 
 
