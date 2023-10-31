@@ -1,0 +1,33 @@
+---
+title: "Chapter 4"
+author: "Ziteng"
+date: "2023-10-31"
+output: html_document
+---
+
+
+
+Counts
+Properties <Non-negative><Discrete integers>
+
+
+Discrete distribution
+<Bernoulli>
+<Binomial>
+<Poisson> When lamda is large it looks like normal, and when lamda is small, it is right-skewed.
+Mean = lamda, variance = lamda
+<Geometric>
+
+What is the difference between Geometric and Poisson distribution.
+
+
+For a constant variance model
+Y_it ~ Po(lamda)
+
+How do we find this lamda?
+Maximum likelihood?
+
+
+
+
+
