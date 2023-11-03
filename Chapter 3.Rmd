@@ -15,17 +15,21 @@ df <- read.csv("NystedFarms.csv")
 
 
 # 3.1
-varfuncclass
-we need to fit y_it first, then
+Power-based and exponential-based
+we need to fit y_it first to get /hat{y_it}, then we can have the exact variance relationship.
+In R, we can use parameter <weights> in gls() to specify the variance relationship.
 
 
-parameter 'method' in gls()
+parameter <method> in gls()
 "ML" < maximum likelihood for information criteria
-but it give us biased estimator, why biased?
+but it give us biased estimate for variance, why biased?
+However, the output gives the unbiased number in R.
 
 Anova is not suitable for GLS
 
 # 3.2 Assessing residual independence
+
+Block the data in order to fit a correlated structure. Within the block it can be correlated, between the block should be independent.
 
 In figure 3.2
 ACF >>>neighboring data are correlated
@@ -34,10 +38,25 @@ How does this work? What the meaning of the graph?
 Method: Durbin-Waston test
 
 Dealing with correlation
-
+ 
 
 # 3.3 Modelling residual correlation using GLS
-Auto-Regressive
-?decay
+To specify correlation structure, we need to "block" our data, and within the block, data has this correlation structure we set up. But we need to make sure the data in different blocks are independent of each other.
+
+Durbin-Watson statistic can give info about lags, and its null hypo is correlation is 0.
+
+Auto-Regressive function
+Regressive on previous values of itself.
+
+Changing the correlation structure does not significantly affect else in the model.
+
+# 3.4 Model selection
+
+
+
+
+
+
+
 
 

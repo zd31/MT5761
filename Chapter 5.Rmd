@@ -1,0 +1,71 @@
+---
+title: "Chapter 5"
+author: "Ziteng"
+date: "2023-11-03"
+output: html_document
+---
+
+Check linearity in GLS model.
+library(effects)
+plot(allEffects(model))
+
+
+# 5.1
+In glm(), the default setting of distribution is normal.
+
+The ex variable still has a linear relation with link function.
+
+Poisson GLM - Log link
+$$
+y_{it} \~ Po(\lambda_{it})
+$$
+
+Link-scale form
+$$
+g(\lambda_{it}) = log(\lambda_{it}) = 
+$$
+
+
+Poisson is for n.n.i, but density = counts/area, its discrete, but not integer.
+For this reason, we need to transform:
+$$
+log(\lambda_{it}/area_{it}) = log(\lambda_{it}) - log(area_{it})
+$$
+We call log(area_it) offset item, and it does affect the interpretation of other coefficients.
+
+So the response-scale is:
+$$
+\lambda_{it} = area_{it} \times exp()
+$$
+
+Poisson distribution only has one parameter lambda, but normal distribution has two mu and sigma. So we dont need an error term for Poisson, we only need to estimate lambda.
+
+
+# 5.3
+
+## Pearson residual
+
+# 5.4 Overdispersion
+
+Quasipoisson
+$$
+E(y_{it}) = \lambda_{it}
+\\
+Var(y_{it}) = \phi \lambda_{it}
+$$
+phi > 1 >>> overdispersion , S.E. will be too small if this is ignored
+phi < 1 >>> underdispersion
+phi = 1 >>> Poisson
+
+In quasipoisson, the S.E.
+$$
+se(\hat{\beta_{i, \phi}}) = \sqrt{\phi}  se(\hat{\beta_i})
+$$
+
+
+
+
+
+
+
+
