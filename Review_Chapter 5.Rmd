@@ -1,0 +1,192 @@
+---
+title: "Chapter 5 Review"
+author: "Ziteng"
+output: html_document
+---
+
+# GLMs for Possion data
+
+## Why this?
+From LM and GLS model, we found they were not suitable/inappropriate for our data.
+The response variable was ***density(counts/area)***, and we are still interested in it. But counts are ***non-negative integers***, and with this property, we now consider using GLMs assuming distribution of response data is Poisson.
+Also, in previous regressions, we detected the errors/residuals are not normal or constant. And counts does not necessarily have linear relationship with covariates.
+
+## 5.1 Something about GLMs and Possion distribution
+**GLMs**
+GLMs allow the mean of the response to be a function of the linear predictor via a link function.
+
+**Link function**
+<br>
+Do some transformation on the left side of equation, and make the right side a linear expression.
+
+**Poisson distribution**
+<br>
+Poisson distribution is discrete probability distribution that tells us the probability of a given number of events occurring in a fixed interval of time/space. And these events occur with constant mean rate and independent.
+
+For example, say the event is Poisson distribution with $\lambda=5$ that we see bird in a many independent and identical areas, then the number of birds we would observe is around 5 in each area.
+
+More importantly, the mean and variance are the same for a data with Poisson distribution.
+
+## 5.2 Model specification
+Instead of estimating one single mean $\lambda$ for the data pooled across transects and time, we allow the $\lambda_{it}$ to change across phases and grids. By doing so, the animal number in each grid is assumed to be a unique Poisson distribution. So the model we build here is to use covariates to explain the change of the mean animal counts.
+
+Here is the model from notes:
+$$
+y_{it} \sim Po(\lambda_{it}) \\
+E(y_{it}) = \lambda_{it} = e^{\beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit}}
+$$
+Log link function:
+$$
+g(\lambda_{it}) = log(\lambda_{it}) = \beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit}
+$$
+**Be minded!**
+
+The response variable is the ***Expected counts***($\lambda$), and it is not the count itself!
+This is also the reason why there is not an error term.
+
+More: 
+Poisson distribution only has one parameter $\lambda$, but normal distribution has two — $\mu$ and $\sigma$. So we only need to estimate $\lambda$ for Poisson.
+
+<br>
+
+**Offset**
+
+The area in our data are not identical, and larger area will have more animals, so some area may look to be more popular with birds simply because more effort was spent in those area. Therefore, density is more appropriate. However, Poisson is for n.n.i, but density = counts/area, which mean it is discrete, but not integer.
+
+To solve this problem, we introduce `offset` term to our model.
+
+$$
+log(\frac{\lambda_{it}}{area_{it}}) = log(\lambda_{it}) - log(area_{it}) \\
+log(\lambda_{it}) = log(area_{it})+ \beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit} \\
+\lambda_{it} = area_{it} \times e^{\beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit}}
+$$
+We call $log(area_{it})$ offset item, and it doesn't affect the interpretation of other coefficients, and it doesn't have a coefficient.
+
+## 5.2 Model fitting
+```{r include=FALSE}
+# Load necessary packages
+library(nlme) ## for GLMs
+library(car) ## for Anova
+library(tidyverse) ## for plots
+```
+
+```{r include=FALSE}
+# Read in data
+df <- read.csv("NystedFarms.csv")
+```
+
+```{r}
+# Log link without offset
+pois.phase_log <- glm(Count ~ Phase, data = df, family = poisson)
+# Sqrt link without offset
+pois.phase_sqrt <- glm(Count ~ Phase, data = df, family = poisson(link = "sqrt"))
+# Log link with offset
+pois.phase_log_offset <- glm(Count ~ Phase, data = df, family = poisson, 
+                             offset = log(Area))
+```
+
+### 5.3.1 Model selection
+We cannot use AIC to compare models with and without an offset, because we are actually modelling different responses — *density* and *counts*.
+
+```{r}
+# AIC
+AIC(pois.phase_log, pois.phase_sqrt, pois.phase_log_offset)
+```
+
+### 5.3.3 Pearson residuals
+Raw/standard residual is $y_{it}-\hat{y_{it}}$
+Pearson residual is $\frac{y_{it}-\hat{y_{it}}}{\sqrt{Estimated\ Variance}}$. And in the Poisson distribution, variance is equal to mean, so its Pearson residual is $\frac{y_{it}-\hat{y_{it}}}{\hat{y_{it}}}$.
+
+This adjustment makes the magnitude of residual comparable across observation, and so theoretically ***Pearson residuals should exhibit no patterns when plotted against fitted values***. If there is pattern, then the assumption on mean-variance relationship is not valid.
+
+## 5.4 Overdispersion
+The variance of the response is larger than what we assumed in model. In our case, overdispersion is that the variance is larger than mean.
+
+We assume the variance is proportional to the mean: $Var(y_{it}) = \phi \lambda_{it}$.
+
+Estimating overdispersion results in re-scaled standard errors and the use of the ***t***-distribution (rather than the ***z***-distribution) when constructing confidence intervals and carrying out hypothesis tests. 
+
+The standard errors for an overdispersed model ($se(\hat{\beta_{it,\hat{\phi}}})$) can be found using the standard errors from the original model ($se(\hat{\beta_{it}})$) and the dispersion parameter estimate ($\hat{\phi}$):
+$se(\hat{\beta_{it,\hat{\phi}}}) = \sqrt{\hat{\phi}} \times se(\hat{\beta_{it}})$.
+
+In R:
+```{r}
+# Overdispersion
+pois.phase_log_offsetOD<- glm(Count ~ Phase, data=df, 
+                              family=quasipoisson, offset=log(Area)) 
+summary(pois.phase_log_offsetOD)
+```
+In this case, we have massive overdispersion; the dispersion parameter is estimated to be more than 1($\hat{\phi}=211.4993$).
+
+This has practical consequences for the standard errors in the model and the conclusions drawn. For example, if we does not detect overdispersion and it actually exists, then the standard error of estimate is underestimated, which will induce lower p-value.
+
+## 5.6 Parameter inference
+Using ML we can say that the parameter estimates will be Normally distributed (for large samples) with mean equal to the true parameter value and some estimated variance.
+$$ 
+\hat{\beta_j} \sim N(\beta_j, \phi\hat{V_j})
+$$
+***If $\phi=1$, then we use z-multiplier; if $\phi>1$, we use t-multiplier. For confidence intervals.***
+
+## 5.7 Identifying redistribution across phases
+### 5.7.2 Model selection
+Use Anova(model, test="F")
+
+***We don't do chi-square test on quasipoisson distribution, it should be specified "F-test" in Anova.***
+
+The mean variance relationship is known in a Poisson distribution, so the Anova will do Chi-square test. However, if we have quasipoisson, we don't know the mean variance relationship, and Anova cannot distinguish it, so we need to specify test = "F" in Anova.
+
+AIC statistic is not available for the quasipoisson model.
+
+### 5.7.3 Model assessment
+
+Assumptions on a Poisson GLM: ***Mean-variance relationship***, ***Residual Independence***, Poisson distribution and Linearity.
+
+We plot the ***observed versus the fitted values***, and assess both the mean-variance relationship and the residual independence assumption.
+
+
+```{r include=FALSE}
+#
+df$FMonth <- factor(df$Month)
+# Drop "DistCoast"
+fullModel_OD_revised<-glm(Count ~ XPos + YPos + Depth + 
+                            FMonth + XPos:Phase + YPos:Phase, 
+                          data=df, offset=log(Area), family=quasipoisson)
+```
+
+
+```{r warning=FALSE, message=FALSE}
+phi_hat <- summary(fullModel_OD_revised)$dispersion
+fitted_values <- fitted(fullModel_OD_revised)
+res_raw <- residuals(fullModel_OD_revised)
+scaled_resid <- (df$Count-fitted_values)/sqrt(phi_hat*fitted_values)
+
+p<-list()
+p[[1]]<-qplot(df$Count, fitted(fullModel_OD_revised)) + 
+              geom_abline(intercept=0,slope=1,color="red") +
+              xlab("Count") + ylab("Fitted values")
+p[[2]]<-qplot(fitted(fullModel_OD_revised), scaled_resid) + 
+              xlab("Fitted values") + ylab("Standardised Residuals")
+
+library(gridExtra)
+library(grid)
+grid.arrange(grobs=p, nrow = 1)
+```
+
+***Autocorrelation***
+```{r}
+par(mfrow =c(1,2))
+set.seed(5)
+acf(rnorm(length(scaled_resid)), lag.max = 40, main = "Ideal correlation")
+acf(scaled_resid, main = "Actual correlation")
+par(mfrow =c(1,1))
+```
+
+
+
+
+
+
+
+
+
+

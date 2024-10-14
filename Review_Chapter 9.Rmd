@@ -1,0 +1,112 @@
+---
+title: "Review_Chapter 9"
+author: "Ziteng"
+output: html_document
+---
+
+# Modelling multiple outcome data: Multinomial models for nominal categorical data
+
+It is derived from Binomial model, in which there are only two responses "0" and "1" (or "Yes" and "No"). But there are at least three responses in a Multinomial model.
+
+## 9.1 Background
+
+### 9.1.2 Aggregated vs. disaggregated categorical data
+Disaggregated: there is one record for each individual sample and responses are in the same columns as data,
+
+Aggregated: responses with the same value of one covariate are grouped together (the original responses become column names), and the data are the number of responses in each group(counts of responses).
+
+If there are continuous covariates, we can only choose to disaggregate. Because we cannot categorize continuous data.
+
+
+## 9.3 Model specification
+Multinomial logit model
+
+For Binomial model:
+$$
+Y_i \sim B(1, p_{i1}) \\
+logit(p_{i1}) = log(\frac{p_{i1}}{1-p_{i1}}) =log(\frac{p_{i1}}{p_{i2}}) = \eta_{i1}
+$$
+Actually there are only $p_{i1}$ and $p_{i2}$ in a Binomial model.
+
+For Multinomial model:
+$$
+Y_i \sim B(1, p_{i1},...,p_{ik}) \\
+logit(p_{i1}) = log(\frac{p_{i1}}{1-p_{i1}}) =log(\frac{p_{i1}}{p_{i2}}) = \eta_{i1}\\
+p_{ij} = \frac{e^{\eta_{ij}}}{1 + \sum^J_{k=2}e^{\eta_{ij}}}
+$$
+In Multinimial, we choose a ***baseline***, and model the log odds of each outcome relative to this baseline.
+
+Each outcome level has different relationship with the covariates and intercept and coefficients changes with changes of level.
+
+**Note**: the number of parameters is $p\times(J-1)$, where p is the number of covariates and J is the number of outcomes. Each outcome relative to the baseline has same number of, but different parameters.
+
+## 9.4 Model fitting
+
+***Maximum Likelihood***
+
+***multinom*** in `nnet` uses the first level as the baseline.
+
+***vglm*** in `VGAM` uses the last level as the baseline.
+
+## 9.6 Obtaining predictions
+
+If we want the probability for each outcome level at given condition, we need to specify the ***type*** of value need to be predicted in the `predict` function.
+
+|function    |baseline    |predict type|residual    |
+|:----------:|:----------:|:----------:|:----------:|
+|multinom    |first       |prob        |raw         |
+|vglm        |last        |response    |log odds    |
+
+## 9.7 Parameter inference and model selection
+
+***z***-tests for confidence intervals
+
+Likelihood ratio tests on non-zero coefficients and model selection
+
+AIC and BIC for model selection
+
+## 9.8 Model assessment
+
+### 9.8.1 MOdel assumptions
+
+**Observations come from a multinomial distribution**
+
+Fit a series of binomial models, and assess the binomial (Pearson) residuals against the fitted values.
+
+**Observations are independent**
+
+If the observation data have a natural order, we can plot the residuals against the data order.
+
+**log odds of each outcome, relative to the baseline have a linear relationship with covariates**
+
+Plot the log odds data against the covariates or plot the partial regression plots.
+
+**log odds are not affected by other outcomes (Independence from Irrelevant Alternatives)**
+
+Based on knowledge and experience.
+
+### 9.8.2 Graphical assessment
+
+***Observed against fitted probabilities by each outcome***
+
+### 9.8.3 Numerical assessment
+
+***Deviance-based Chi-squared statistic***
+
+If we are using `multinom`, then we need to subtract off the deviance from the saturated model.
+
+$deviance(fitted~model) - deviance(saturated~model)$, and the df for Chi-squared test is $(J-1)\times n-p$, and p here are parameters including intercepts, which is different with other GLMs which p does not include intercept and df is $n-p-1$.
+
+***McFadden's $R^2$***
+
+The usual $R^2$ is based on square error, which is connected to normal distribution. But in Multinomial model, the error comes from binomial distribution.
+
+$$
+R^2_{McFadden} = 1 - \frac{l_{our~model}}{l_{null~model}}
+$$
+
+
+
+
+
+

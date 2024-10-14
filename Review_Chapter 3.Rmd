@@ -1,0 +1,95 @@
+---
+title: "Review_Chapter 3"
+author: "Ziteng"
+output: html_document
+---
+
+# Generalized Least Squares
+
+**Why this?**
+
+GLS can be used to deal with non-constant residual variance. Normally it is for ***increasing mean-variance relationship***.
+
+**Note**: mean-variance relationship means the relationship between fitted value($\hat{y_i}$) and residual variance.
+
+## 3.1 Model specification
+
+No mean-variance relationship:
+$$
+y_{it} = \beta_0 + \beta_1 x_{1it},..., + \beta_p x_{pit} + N(0, \sigma^2)
+$$
+Exponential-based mean-variance relationship:
+$$
+y_{it} = \beta_0 + \beta_1 x_{1it},..., + \beta_p x_{pit} + N(0, \sigma^2 e^{2m \hat{y_{it}}})
+$$
+Power-based mean-variance relationship:
+$$
+y_{it} = \beta_0 + \beta_1 x_{1it},..., + \beta_p x_{pit} + N(0, \sigma^2|\hat{y_{it}}|^{2m})
+$$
+
+**Note**: we use Maximum-likelihood to fit model, and it enable us to compare different models using AIC scores.
+
+
+## 3.2 Assessing residual independence (Autocorrelation)
+
+If residuals are correlated, it means there is less information/variability in the data than assumed under the model, which mean the value of n is less than actual number of observations.
+
+**Method**
+Plot the residuals in observation order and use ACF.
+
+Durbin-Watson test is used for testing residual independence on lm-based model, and result of this test on GLS-based model is not reliable.
+
+**How to deal with violation**
+
+*Ignore*: misleading results
+
+*Remove*: waste of information
+
+*Build a model assuming no independent residuals*
+
+## 3.3 Modelling residual correlation using GLS
+
+We need to determine a correlation structure.
+
+Firstly, we need to '***block***' our data, and residuals within the blocks are free to be correlated, but between blocks are assumed to be independent.
+
+Then use Autocorrelation Functions (ACF: regressive on previous values of itself) to choose correlation structure within the block.
+
+We use AIC to select the model with the best correlation structure.
+
+*Note*: Changing the correlation structure does not significantly affect else in the model.
+
+We use ***normalized residuals*** to measure the adequacy of a correlation method.
+We would expect the normalized residuals are independent and approximately Normally distributed with mean zero and constant variance.
+
+**Note**: *normalized* means the raw residuals are adjusted based on the covariance within the block.
+
+*What is correlation structure?*
+
+*Why we are 'blocking' the data?*
+
+*How many observations should be included in a block?*
+
+Durbin-Watson statistic can give info about lags, and its null hypo is correlation is 0.
+
+*Do blocks have the same correlation structure?*
+
+## 3.4 Assessing normality
+
+We would expect the ***normalized residuals*** to be Normally distributed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

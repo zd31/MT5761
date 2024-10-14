@@ -1,0 +1,133 @@
+---
+title: "Review_Chapter 2"
+author: "Ziteng"
+output: html_document
+---
+
+# Multiple linear regression
+
+## 2.1 Model specification
+
+Multiple regression model:
+$$
+y_{it} = \beta_0 + \beta_1 x_{1it} + \beta_2 x_{2it} + ... + \beta_p x_{pit} + \epsilon_{it} \\
+\epsilon_{it} \sim N(0, \sigma^2)
+$$
+(By writing model like this, we have already assumed the (continuous) covariates have linear relationship with the response variable.)
+
+Or we can write the model in this way:
+$$
+y_{it} = linear \ predictor + error \ term_{it} \\
+E(y_{it}) = \mu_{it} = linear \ predictor
+$$
+The error term is assumed to be normally distributed with mean == 0 and variance == $\sigma^2$.
+
+There is no error in second expression, and each y_it is i.i.d and normally distributed with mean == $\mu_{it}$, variance == $\sigma^2$. (***Try to relate this to the assumptions***)
+
+
+**Above we call main effects.**
+
+Now we consider ***interaction***, which give us additional information about the slope of specific continuous variable
+
+Introduce interaction to the model when trying to find how the two covariates affects each other.
+
+Interaction between continuous variables affects both coefficients;
+
+Interaction between categorical variables affects the intercept;
+
+Interaction between continuous and categorical variables affects the coefficient of continuous.
+
+## 2.2 Model fitting
+
+**Least-Squares**
+
+Method of fitting: 
+Least-Squares(Find the parameters with smallest variances of residuals, or in other words, we want the "distance" between sample data and fitted model to be the smallest.).
+
+Properties of Least-Squares:
+Best Linear Unbiased Estimators(BLUE)
+
+BLUEs are:
+
+*Unbiased*: the distribution of estimators is centered around the true parameter value.(The expected value is the true value.)
+
+*Consistent*: larger sample size, closer to the true parameter value on average.
+
+*Efficient*: estimates are closer on average to the true parameter than any other estimators.
+
+Above three properties are how we evaluate a statistic/estimate.
+
+## 2.3 Parameter interpretation
+
+The variables we choose includes continuous and categorical variables.
+
+And the intercept of our model means when all continuous variables == 0 at baseline.
+
+The coefficients of continuous variables tell us (only in this model), the ***expected*** change in density per unit change in continuous variables.
+
+The coefficients of categories variables tell us, the ***expected*** change in density relative to the baseline.
+
+## 2.4 Parameter inference
+We use t-distribution to construct confidence intervals
+
+### 2.4.1 Hypothesis testing
+We are assessing the factor variable as a group.
+
+F-test (ANOVA) can be used to test whether the coefficients are all equal to zero. Testing if the model is better than just a straight line.
+
+## 2.5 Model selection
+
+In the coefficient part of the outcome of regression, each row is test separately. Cannot remove insignificant variable according to this.
+
+## 2.6 Checking model assumptions
+
+### 2.6.1 Assessing linearity
+
+**Partial residual plots**
+
+**Outliers and Influential points**
+
+*Outliers*: observations that are not well fitted by the model. Mathematically, the standardized residual is large.
+
+*Influential points*: if removed, the esitmates change substantially.
+
+### 2.6.3 Assessing constant variance (critical)
+$$
+Var(\epsilon_i|x_i) = \sigma^2
+$$
+**Mean-Variance relationship**
+
+We should expect the ***residuals*** to show no pattern and spread roughly equal and random across the ***fitted value***(mean).
+
+Quantitatively, we use ***Breusch-Pagan*** test with null hypothesis that residual variances are constant across $\hat{Y_{it}}$.
+
+### 2.6.4 Assessing independence of errors (critical)
+We should expect the ***residuals*** to distribute around the horizontal axis randomly across ***observation order***.
+
+**Consequences of violation**
+
+Unrealistic standard errors and misleading significance tests.
+E.g., positively correlated data vary less than independent data(because correlated data are similar)
+
+and ***offer less information than independent data(effective sample size is smaller than real sample size)***.
+
+underestimated variance + overestimated sample size = underestimated standard error = overestimated test result = underestimated p-value
+
+***The Least-Square method will not provide effective estimates any more.***
+
+### 2.6.5 Assessing normality (less important)
+Q-Q plot
+
+
+
+
+
+
+
+
+
+
+
+
+
+

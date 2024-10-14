@@ -1,0 +1,75 @@
+---
+title: "Review_Chapter 6"
+author: "Ziteng"
+output: html_document
+---
+
+# Modelling changes in presence pre and post impact
+
+## 6.2 Estimating a proportion: The theory
+
+In this chapter, we are going to estimate the probability of sighting birds in this area **for the entire survey period**. So the *p* we are trying to estimate is ***constant***.
+
+The method for estimating is ***Maximum Likelihood***. This method utilizes the sample data we have already known, such as number of successes and number of trials, to find the *p* with which we can draw such sample data with maximum likelihood.
+
+We assume the response variable comes from Binomial distribution which has 4 conditions:
+
+two outcomes (1 and 0);
+
+a fixed number of trials ($n_i$, i=1...25);
+
+independence of each trial (least plausible-spatial correlated);
+
+constant probability of success (constant *p*).
+
+The Maximum Likelihood Estimate of *p* is the same with $\hat{p}=\frac{\sum^{25}_{i=1}Y_i}{\sum^{25}_{i=1}n_i}$, if $Y_i...Y_{25}$ are independent with Binomial distribution.
+
+***Be minded!***
+
+In our case, the number of trials is $n_i$, and we have 25 samples, each has different number of trials.
+
+## 6.3 Confidence intervals for Binomial data (CI for Proportions)
+
+### Large sample size
+
+$\hat{p}$ is normally distributed around real $p$, $\hat{p} \sim N(p, \sqrt{\frac{p(1-p)}{\sum^N_{i=1}n_i}})$
+
+Use *z*-multiplier.
+
+**Note**: the variance here is for ***proportion***, not for $Y_i$, and the variance of proportion is a function of itself $p(1-p)$.
+
+***How large is large enough?***
+
+Make sure both $\hat{p} \sum^{N}_{i=1}n_i$ and $(1-\hat{p}) \sum^{N}_{i=1}n_i$ ***larger than 5***.
+
+**Note**: we want both to be larger than 5 because if $\hat{p}$ is near 1, then we only need a small number of sample.
+
+### Small sample size
+
+For ***small sample size*** and ***when $\hat{p}$ is close to 0 or 1***, we use '***Wilson***' intervals as it will return values between 0 and 1.
+
+
+**Note**: this method can also be used to each year-month probability.
+
+## 6.4 Comparing proportions using the z-test
+
+***Be minded!***
+
+Here we are going to test the difference between year-month probabilities, not the entire survey period.
+
+The ***most important*** thing is how to calculate the ***Standard Error***.
+
+Actually, by fitting a binomial GLMs to the data, we have already assumed the data between each year-month are independent. With this assumption, we can calculate the S.E. with $\hat{se} (\hat{p_1} - \hat{p_1}) = \sqrt{\frac{\hat{p_1}(1-\hat{p_1})}{n_1} + \frac{\hat{p_2}(1-\hat{p_2})}{n_2}}$.(This is $\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}$) 
+
+***Be minded!***
+
+We are talking about ***proportion*** here! NOT the number of success. For proportion, the mean and variance should be $p$ and $p(1-p)$. 
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,129 @@
+---
+title: "Review_Chapter 7"
+author: "Ziteng"
+output: html_document
+---
+
+# GLMs for Proportions
+
+## 7.1 Model specification
+
+Use ***Binomial*** distribution to model the ***probability (proportion)*** of successfully sighting birds ***over time***.
+
+**Note**: response variable is the probability that the event{Sighting Birds} happens, not the event itself.
+
+$Y_i$ is the number of event{Sighting Birds} happens out of $n_i$ observations, $Y_i \sim Bin(n_i, p_i)$.
+
+$p_i$ is allowed to change over time.
+
+The logistic regression model: 
+
+response scale
+$$
+p_i = \frac{e^{\eta_i}}{1+e^{\eta_i}}=\frac{e^{\beta_0+\beta_1 x_i}}{1+e^{\beta_0+\beta_1 x_i}}
+$$
+
+link scale
+$$
+g(p_i)=log(\frac{p_i}{1-p_i})=\eta_i=\beta_0+\beta_1 x_i
+$$
+
+Other link functions:
+
+**probit**
+
+link scale $g(p_i)=\Phi^{-1}(p_i)$, response scale $p_i=\Phi(\beta_0+\beta_1 x_i)$.
+
+**complementary log-log**
+
+link scale $g(p_i)=log(-log(1-p_i))$, response scale $p_i=1-exp(-exp(\beta_0+\beta_1 x_i))$
+
+***Be minded!***
+
+NO matter which link function we use, the mean and variance of $Y_i$ are the same, and $Y_i$ is Binomial distributed.
+
+## 7.2 Model selection
+
+***Log-likelihood values*** and ***AIC statistics*** are method we use to select models.
+
+**Note**: log-likelihood is negative numbers, and $AIC = -2log-likelihood + 2P$.
+
+## 7.3 Parameter interpretation
+
+$$
+odds = \frac{p_{it}}{1-p_{it}} = e^{\beta_0+\beta_1 x_i}
+$$
+
+## 7.4 Parameter inference
+
+**Confidence intervals**
+
+We use ***z***-multiplier to construct confidence intervals. 
+
+
+**Testing for non-zero covariate relationships**
+
+Null hypothesis: $\beta_1=\beta_2=...\beta_p=0$
+
+Method: $\chi^2$ test (Anova)
+
+**Note**: this $\chi^2$ test is a likelihood ratio test between a model with covariates and one without. 
+
+## 7.5 Model assessment
+
+### 7.5.1 Graphical assessment
+
+Assess the ***fit*** of model by plotting the ***observed proportions ($y_{it}$)*** against the ***fitted values ($\hat{y_{it}}$)***. 
+
+We would expect the points be around the $y=x$ line if our model has a good fit.
+
+### 7.5.2 Numerical assessment
+
+We compare the maximized log likelihood values of our model with the 'perfectly fitted' model, or ***saturated model***.
+
+
+**Deviance**
+
+Deviance provides a measure of discrepancy between the fitted model and saturated model.
+
+$$
+D = 2[log~likelihood(Saturated) - log~likelihood(fitted)]
+$$
+From the definition, we would like a small value of deviance if our model fits good.
+
+*How small is small?*
+
+Deviance is approximately Chi-squared distributed $D \sim \chi_{n-p-1}^2$ when $n$ is large and our model is correctly specified. (And it is exactly Chi-squared if the error of GLMs is normally distributed.)
+
+We would expect the deviance looks like it comes from a Chi-squared distribution.
+
+So we need to test if the deviance is Chi-squared distributed. The null hypothesis would be 'our model is correct'.
+
+## 7.6 Model assumptions
+
+**Linearity in link scale**
+
+Partial residual plots
+
+**Mean-variance relationship**
+
+Fitted values vs. Pearson residuals
+
+We would expect no pattern if the assumption is valid.
+
+**Independent observations**
+
+ACF or runs test
+
+
+
+
+
+
+
+
+
+
+
+
+

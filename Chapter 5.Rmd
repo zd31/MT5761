@@ -5,45 +5,47 @@ date: "2023-11-03"
 output: html_document
 ---
 
-Check linearity in GLS model.
-library(effects)
-plot(allEffects(model))
-
 
 # 5.1
-In glm(), the default setting of distribution is normal.
+In glm(), the default setting of distribution is normal(Gaussian).
 
-The ex variable still has a linear relation with link function.
+For a Poisson glm():
+The response variable is Poisson distributed.
+The explanatory variables still have a linear relation with link function.
 
 Poisson GLM - Log link
 $$
-y_{it} \~ Po(\lambda_{it})
+y_{it} \sim Po(\lambda_{it}) \\
+E(Y_{it}) = \lambda_{it} = e^{\beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit}}
 $$
+Because the the model is the expectation of Y_it, so there is not an error term in the model.
+Poisson distribution only has one parameter lambda, but normal distribution has two -- mu and sigma. So we only need to estimate lambda for Poisson.
 
 Link-scale form
 $$
-g(\lambda_{it}) = log(\lambda_{it}) = 
+g(\lambda_{it}) = log(\lambda_{it}) = \beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit}
 $$
-
 
 Poisson is for n.n.i, but density = counts/area, its discrete, but not integer.
 For this reason, we need to transform:
 $$
-log(\lambda_{it}/area_{it}) = log(\lambda_{it}) - log(area_{it})
+log(\frac{\lambda_{it}}{area_{it}}) = log(\lambda_{it}) - log(area_{it}) \\
+log(\lambda_{it}) = log(area_{it})+ \beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit}
 $$
-We call log(area_it) offset item, and it does affect the interpretation of other coefficients.
+We call log(area_it) offset item, and it doesn't affect the interpretation of other coefficients.
 
 So the response-scale is:
 $$
-\lambda_{it} = area_{it} \times exp()
+\lambda_{it} = area_{it} \times \exp(\beta_0 + \beta_1x_{1it} + \beta_2x_{2it}+...+ \beta_px_{pit})
 $$
-
-Poisson distribution only has one parameter lambda, but normal distribution has two mu and sigma. So we dont need an error term for Poisson, we only need to estimate lambda.
 
 
 # 5.3
 
-## Pearson residual
+## Pearson residualy
+$$
+r_{it}^P = \frac{y_{iy} - \hat{y_{it}}}{\sqrt{\hat{y_{it}}}}
+$$
 
 # 5.4 Overdispersion
 
@@ -61,6 +63,45 @@ In quasipoisson, the S.E.
 $$
 se(\hat{\beta_{i, \phi}}) = \sqrt{\phi}  se(\hat{\beta_i})
 $$
+
+
+# 5.5
+Multiplicative effect of coefficients >>> percentage changes relative to baseline
+ 
+
+
+
+## Check assumptions about GLMs
+$$
+y_{it} \sim Po(\lambda_{it})
+
+$$
+
+Two Critical assumptions>>>>
+1<<Mean-variance relationship>> 
+Specify family = quasipoisson to check overdispersion.
+
+We don't do chi-square test on quasipoisson distribution, it should be specified a F test in Anova.
+The mean variance relationship is known in a Poisson distribution, so the Anova will do Chi-square test. However, if we have quasipoisson, we don't know the mean variance relationship, and Anova cannot distinguish it, so we need to specify test = "F" in Anova.
+
+Even if in regression results, one of the state in one categorical covariate is not significant, but the F-test shows the whole categorical covariate is significant, we still keep all.
+
+2<<Independence>>
+acf
+allEffects
+
+Less critical>>>>
+Poisson distribution>> Check if the distribution of the 'Count' is Poisson.
+Linearity>>
+Check linearity in GLS model.(not necessary)
+library(effects)
+plot(allEffects(model))
+
+
+
+
+
+
 
 
 

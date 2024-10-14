@@ -1,0 +1,60 @@
+---
+title: "Review_Chapter 10"
+author: "Ziteng"
+date: "2023-12-04"
+output: html_document
+---
+
+# Multinomial Models for Ordinal Data
+
+## 10.5 Model specification
+
+Since there is a natural order in response levels, we can use ***cumulative response probabilities***.
+
+Link function:
+$$
+logit[P(Y_{it}<j)] = log[\frac{P(Y_{it}<j)}{P(Y_{it} \ge j)}] = \beta_{0j} + \textbf{x}^T \boldsymbol{\beta} ~~~(j=1,...,J-1)
+$$
+**Note**: the coefficients are assumed to be ***constant*** for each cumulative logit, but the intercept changes.
+
+## 10.6 Model fitting
+
+***vglm*** uses $logit[P(Y_{it} \ge j)]~~~(j=2,...,J)$.
+
+***polr*** uses $logit[P(Y_{it} \le j)]~~~(j=1,...,J-1)$
+
+$P(Y_{it} \ge j) = \frac{e^{\beta_{0j} + \textbf{x}^T \boldsymbol{\beta}}}{1+e^{\beta_{0j} + \textbf{x}^T \boldsymbol{\beta}}}$
+
+## 10.8 Visual interpretation
+
+Covariate against the response(probability) (***effects plots***) using ***polr***.
+
+## 10.10 Inference about model parameters
+
+If large percentage of observations fall into the highest or lowest category, we need to use ***likelihood ratio test***:
+$$
+-2(L_0 - L_1)
+$$
+where $L_0$ is the maximized log-likelihood under the null hypothesis that a particular parameter is equal to zero ($\beta_p=0$) and $L_1$ is the maximized log-likelihood at $\hat{\beta_p}$.
+
+## 10.12 Model assessment
+
+**Observations come from binomial distribution**
+
+Fit a series of Binomial models and assess their residuals.
+
+**Observations are independent**
+
+Plot residuals against data order.
+
+**Cumulative log odds of each outcome have linear relationship with covariates**
+
+Visualize.
+
+**The slope of this relationship is the same for each outcome level(proportional odds)**
+
+Fit a model that does not have this assumption, and compare its BIC with our model.
+
+
+
+
