@@ -5,3 +5,63 @@ date: "2024-10-14"
 output: html_document
 ---
 
+# Chapter 1 Introduction
+
+```{r message=FALSE, warning=FALSE}
+# Data read in
+df <- read.csv("NystedFarms.csv")
+
+# Necessay packages
+library(tidyverse)
+
+# Exam data
+head(df)
+```
+
+```{r}
+# Figure for distribution of birds counts by coordinates
+ggplot() + 
+  geom_point(aes(x=XPos, y=YPos),
+             color="lightgrey", data=df) +
+  geom_point(aes(x=XPos, y=YPos, size=log(Count)),
+             color="#377eb8", data=subset(df, Count>0)) + 
+  theme_bw() + coord_equal() + 
+  theme(panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank()) + 
+  ggtitle("Figure 1.1")
+```
+
+The transect locations are represented by grey dots and locations with non-zero counts are represented by blue dots; size of blue dots are scaled based on the number of counts.
+
+### 1.1 Research Questions
+
+- Does density appear to have changed across phases?
+- What are the best predictors of density and what do these relationships look like?
+- Do the animals appear to have redistributed across phases? If so, what does that redistribution look like?
+
+### 1.2 Exploratory Data Analysis
+
+```{r}
+# Compute CIs for each construction phase using normal approx.
+alpha <- 0.5
+z_alpha_2 <- abs(qnorm(alpha/2)) # z_{alpha/2}
+stats <- df %>%
+  group_by(Phase) %>%
+  summarise(Mean=mean(Count),
+            Var=var(Count),
+            N=n(),
+            CI=z_alpha_2*sqrt(Var/N))
+
+# Plot mean and 95% CIs
+ggplot(stats, aes(x=Phase, y=Mean, color=Phase)) + 
+  geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), linewidth=1) +
+  geom_point(size=4) + 
+  geom_text(aes(x=Phase, y=Mean+1.2*CI, label=paste0("N=", N))) + 
+  ylab("Counts") + ggtitle("Figure 1.2")
+```
+
+
+
+
+
+
